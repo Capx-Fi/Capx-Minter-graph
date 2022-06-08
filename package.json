@@ -1,0 +1,16 @@
+{
+  "name": "tokenminter",
+  "license": "UNLICENSED",
+  "scripts": {
+    "codegen": "graph codegen",
+    "build": "graph build",
+    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ varun-capx/tokenminter",
+    "create-local": "graph create --node http://localhost:8020/ varun-capx/tokenminter",
+    "remove-local": "graph remove --node http://localhost:8020/ varun-capx/tokenminter",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 varun-capx/tokenminter"
+  },
+  "dependencies": {
+    "@graphprotocol/graph-cli": "0.30.4",
+    "@graphprotocol/graph-ts": "0.27.0"
+  }
+}
