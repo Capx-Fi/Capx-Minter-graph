@@ -1,4 +1,4 @@
-import { BigInt } from "@graphprotocol/graph-ts"
+import { bigInt, BigInt } from "@graphprotocol/graph-ts"
 import {
   CapxFactory,
   AdminChanged,
@@ -9,54 +9,11 @@ import {
   OwnershipTransferred,
   Upgraded
 } from "../generated/CapxFactory/CapxFactory"
-import { ExampleEntity } from "../generated/schema"
+
+import {ERC20Token} from "../generated/CapxFactory/ERC20Token"
+import { TokenDeployed,ERC20Implementation } from "../generated/schema"
 
 export function handleAdminChanged(event: AdminChanged): void {
-  // Entities can be loaded from the store using a string ID; this ID
-  // needs to be unique across all entities of the same type
-  let entity = ExampleEntity.load(event.transaction.from.toHex())
-
-  // Entities only exist after they have been saved to the store;
-  // `null` checks allow to create entities on demand
-  if (!entity) {
-    entity = new ExampleEntity(event.transaction.from.toHex())
-
-    // Entity fields can be set using simple assignments
-    entity.count = BigInt.fromI32(0)
-  }
-
-  // BigInt and BigDecimal math are supported
-  entity.count = entity.count + BigInt.fromI32(1)
-
-  // Entity fields can be set based on event parameters
-  entity.previousAdmin = event.params.previousAdmin
-  entity.newAdmin = event.params.newAdmin
-
-  // Entities can be written to the store with `.save()`
-  entity.save()
-
-  // Note: If a handler doesn't require existing field values, it is faster
-  // _not_ to load the entity from the store. Instead, create it fresh with
-  // `new Entity(...)`, set the fields that should be updated and save the
-  // entity back to the store. Fields that were not set or unset remain
-  // unchanged, allowing for partial updates to be applied.
-
-  // It is also possible to access smart contracts from mappings. For
-  // example, the contract that has emitted the event can be connected to
-  // with:
-  //
-  // let contract = Contract.bind(event.address)
-  //
-  // The following functions can then be called on this contract to access
-  // state variables and other data:
-  //
-  // - contract.deployedContracts(...)
-  // - contract.erc20Implementations(...)
-  // - contract.owner(...)
-  // - contract.proxiableUUID(...)
-  // - contract.typesOfToken(...)
-  // - contract.createToken(...)
-  // - contract.createReflectiveToken(...)
 }
 
 export function handleBeaconUpgraded(event: BeaconUpgraded): void {}
@@ -65,9 +22,32 @@ export function handleInitialized(event: Initialized): void {}
 
 export function handleNewERC20Implementation(
   event: NewERC20Implementation
-): void {}
+): void {
+  let entity = ERC20Implementation.load(event.params.typeID.toHex())
+  if (entity == null) {
+    entity = new ERC20Implementation(event.params.typeID.toHex())
+  }
+  entity.tokenAddress = event.params.implementation.toHex()
+  entity.tokenTypeString = event.params.typeOfToken
+  entity.save()
+}
 
-export function handleNewTokenDeployed(event: NewTokenDeployed): void {}
+export function handleNewTokenDeployed(event: NewTokenDeployed): void {
+  let token = TokenDeployed.load(event.params.token.toHex())
+  if (!token) {
+    token = new TokenDeployed(event.params.token.toHex()) 
+  }
+  token.typeOfToken = event.params.tokenType
+  let erc20instance = ERC20Token.bind(event.params.token)
+  token.tokenName = (erc20instance.name())
+  token.tokenSymbol = erc20instance.symbol()
+  token.tokenDecimals = BigInt.fromI32(erc20instance.decimals())
+  token.tokenTotalSupply = (erc20instance.totalSupply())
+  token.tokenOwner = event.params.owner.toHex()
+  token.tokenDeployer = event.transaction.from.toHex()
+  token.tokenCreatedAt = event.block.timestamp
+  token.save()
+}
 
 export function handleOwnershipTransferred(event: OwnershipTransferred): void {}
 
