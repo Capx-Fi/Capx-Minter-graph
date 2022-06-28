@@ -1,6 +1,6 @@
 specVersion: 0.0.4
 schema:
-  file: ./schema.graphql
+  file: schema.graphql
 dataSources:
   - kind: ethereum
     name: CapxFactory
@@ -18,14 +18,14 @@ dataSources:
         - BeaconUpgraded
         - Initialized
         - NewERC20Implementation
-        - NewTokenDeployed 
+        - NewTokenDeployed
         - OwnershipTransferred
         - Upgraded
       abis:
         - name: CapxFactory
-          file: ./abis/CapxFactory.json
+          file: CapxFactory/abis/CapxFactory.json
         - name: ERC20Token
-          file: ./abis/ERC20Token.json
+          file: CapxFactory/abis/ERC20Token.json
       eventHandlers:
         - event: AdminChanged(address,address)
           handler: handleAdminChanged
@@ -41,4 +41,4 @@ dataSources:
           handler: handleOwnershipTransferred
         - event: Upgraded(indexed address)
           handler: handleUpgraded
-      file: ./src/capx-factory.ts
+      file: CapxFactory/CapxFactory.wasm

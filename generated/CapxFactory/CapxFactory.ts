@@ -92,6 +92,14 @@ export class NewERC20Implementation__Params {
   get implementation(): Address {
     return this._event.parameters[2].value.toAddress();
   }
+
+  get isReflective(): boolean {
+    return this._event.parameters[3].value.toBoolean();
+  }
+
+  get features(): Array<boolean> {
+    return this._event.parameters[4].value.toBooleanArray();
+  }
 }
 
 export class NewTokenDeployed extends ethereum.Event {
@@ -115,8 +123,8 @@ export class NewTokenDeployed__Params {
     return this._event.parameters[1].value.toAddress();
   }
 
-  get owner(): Address {
-    return this._event.parameters[2].value.toAddress();
+  get documentHash(): string {
+    return this._event.parameters[2].value.toString();
   }
 }
 
@@ -163,6 +171,139 @@ export class Upgraded__Params {
 export class CapxFactory extends ethereum.SmartContract {
   static bind(address: Address): CapxFactory {
     return new CapxFactory("CapxFactory", address);
+  }
+
+  autoLPRouter(): Address {
+    let result = super.call("autoLPRouter", "autoLPRouter():(address)", []);
+
+    return result[0].toAddress();
+  }
+
+  try_autoLPRouter(): ethereum.CallResult<Address> {
+    let result = super.tryCall("autoLPRouter", "autoLPRouter():(address)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
+  createReflectiveToken(
+    _name: string,
+    _symbol: string,
+    _decimal: i32,
+    _supply: BigInt,
+    _address: Array<Address>,
+    _parameters: Array<BigInt>,
+    _typeOfToken: BigInt,
+    _documentHash: string
+  ): Address {
+    let result = super.call(
+      "createReflectiveToken",
+      "createReflectiveToken(string,string,uint8,uint256,address[2],uint256[5],uint256,string):(address)",
+      [
+        ethereum.Value.fromString(_name),
+        ethereum.Value.fromString(_symbol),
+        ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(_decimal)),
+        ethereum.Value.fromUnsignedBigInt(_supply),
+        ethereum.Value.fromAddressArray(_address),
+        ethereum.Value.fromUnsignedBigIntArray(_parameters),
+        ethereum.Value.fromUnsignedBigInt(_typeOfToken),
+        ethereum.Value.fromString(_documentHash)
+      ]
+    );
+
+    return result[0].toAddress();
+  }
+
+  try_createReflectiveToken(
+    _name: string,
+    _symbol: string,
+    _decimal: i32,
+    _supply: BigInt,
+    _address: Array<Address>,
+    _parameters: Array<BigInt>,
+    _typeOfToken: BigInt,
+    _documentHash: string
+  ): ethereum.CallResult<Address> {
+    let result = super.tryCall(
+      "createReflectiveToken",
+      "createReflectiveToken(string,string,uint8,uint256,address[2],uint256[5],uint256,string):(address)",
+      [
+        ethereum.Value.fromString(_name),
+        ethereum.Value.fromString(_symbol),
+        ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(_decimal)),
+        ethereum.Value.fromUnsignedBigInt(_supply),
+        ethereum.Value.fromAddressArray(_address),
+        ethereum.Value.fromUnsignedBigIntArray(_parameters),
+        ethereum.Value.fromUnsignedBigInt(_typeOfToken),
+        ethereum.Value.fromString(_documentHash)
+      ]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
+  createToken(
+    _name: string,
+    _symbol: string,
+    _owner: Address,
+    _decimal: i32,
+    _initialSupply: BigInt,
+    _totalSupply: BigInt,
+    _typeOfToken: BigInt,
+    _documentHash: string
+  ): Address {
+    let result = super.call(
+      "createToken",
+      "createToken(string,string,address,uint8,uint256,uint256,uint256,string):(address)",
+      [
+        ethereum.Value.fromString(_name),
+        ethereum.Value.fromString(_symbol),
+        ethereum.Value.fromAddress(_owner),
+        ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(_decimal)),
+        ethereum.Value.fromUnsignedBigInt(_initialSupply),
+        ethereum.Value.fromUnsignedBigInt(_totalSupply),
+        ethereum.Value.fromUnsignedBigInt(_typeOfToken),
+        ethereum.Value.fromString(_documentHash)
+      ]
+    );
+
+    return result[0].toAddress();
+  }
+
+  try_createToken(
+    _name: string,
+    _symbol: string,
+    _owner: Address,
+    _decimal: i32,
+    _initialSupply: BigInt,
+    _totalSupply: BigInt,
+    _typeOfToken: BigInt,
+    _documentHash: string
+  ): ethereum.CallResult<Address> {
+    let result = super.tryCall(
+      "createToken",
+      "createToken(string,string,address,uint8,uint256,uint256,uint256,string):(address)",
+      [
+        ethereum.Value.fromString(_name),
+        ethereum.Value.fromString(_symbol),
+        ethereum.Value.fromAddress(_owner),
+        ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(_decimal)),
+        ethereum.Value.fromUnsignedBigInt(_initialSupply),
+        ethereum.Value.fromUnsignedBigInt(_totalSupply),
+        ethereum.Value.fromUnsignedBigInt(_typeOfToken),
+        ethereum.Value.fromString(_documentHash)
+      ]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
   deployedContracts(param0: BigInt, param1: BigInt): Address {
@@ -268,115 +409,205 @@ export class CapxFactory extends ethereum.SmartContract {
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
+}
 
-  createToken(
-    _name: string,
-    _symbol: string,
-    _owner: Address,
-    _decimal: i32,
-    _initialSupply: BigInt,
-    _totalSupply: BigInt,
-    _features: Array<boolean>
-  ): Address {
-    let result = super.call(
-      "createToken",
-      "createToken(string,string,address,uint8,uint256,uint256,bool[4]):(address)",
-      [
-        ethereum.Value.fromString(_name),
-        ethereum.Value.fromString(_symbol),
-        ethereum.Value.fromAddress(_owner),
-        ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(_decimal)),
-        ethereum.Value.fromUnsignedBigInt(_initialSupply),
-        ethereum.Value.fromUnsignedBigInt(_totalSupply),
-        ethereum.Value.fromBooleanArray(_features)
-      ]
-    );
-
-    return result[0].toAddress();
+export class AddNewERC20ImplementationCall extends ethereum.Call {
+  get inputs(): AddNewERC20ImplementationCall__Inputs {
+    return new AddNewERC20ImplementationCall__Inputs(this);
   }
 
-  try_createToken(
-    _name: string,
-    _symbol: string,
-    _owner: Address,
-    _decimal: i32,
-    _initialSupply: BigInt,
-    _totalSupply: BigInt,
-    _features: Array<boolean>
-  ): ethereum.CallResult<Address> {
-    let result = super.tryCall(
-      "createToken",
-      "createToken(string,string,address,uint8,uint256,uint256,bool[4]):(address)",
-      [
-        ethereum.Value.fromString(_name),
-        ethereum.Value.fromString(_symbol),
-        ethereum.Value.fromAddress(_owner),
-        ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(_decimal)),
-        ethereum.Value.fromUnsignedBigInt(_initialSupply),
-        ethereum.Value.fromUnsignedBigInt(_totalSupply),
-        ethereum.Value.fromBooleanArray(_features)
-      ]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
+  get outputs(): AddNewERC20ImplementationCall__Outputs {
+    return new AddNewERC20ImplementationCall__Outputs(this);
+  }
+}
+
+export class AddNewERC20ImplementationCall__Inputs {
+  _call: AddNewERC20ImplementationCall;
+
+  constructor(call: AddNewERC20ImplementationCall) {
+    this._call = call;
   }
 
-  createReflectiveToken(
-    _name: string,
-    _symbol: string,
-    _decimal: i32,
-    _supply: BigInt,
-    _address: Array<Address>,
-    _reflectionType: Array<boolean>,
-    _parameters: Array<BigInt>
-  ): Address {
-    let result = super.call(
-      "createReflectiveToken",
-      "createReflectiveToken(string,string,uint8,uint256,address[3],bool[4],uint256[5]):(address)",
-      [
-        ethereum.Value.fromString(_name),
-        ethereum.Value.fromString(_symbol),
-        ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(_decimal)),
-        ethereum.Value.fromUnsignedBigInt(_supply),
-        ethereum.Value.fromAddressArray(_address),
-        ethereum.Value.fromBooleanArray(_reflectionType),
-        ethereum.Value.fromUnsignedBigIntArray(_parameters)
-      ]
-    );
-
-    return result[0].toAddress();
+  get typeOfToken(): string {
+    return this._call.inputValues[0].value.toString();
   }
 
-  try_createReflectiveToken(
-    _name: string,
-    _symbol: string,
-    _decimal: i32,
-    _supply: BigInt,
-    _address: Array<Address>,
-    _reflectionType: Array<boolean>,
-    _parameters: Array<BigInt>
-  ): ethereum.CallResult<Address> {
-    let result = super.tryCall(
-      "createReflectiveToken",
-      "createReflectiveToken(string,string,uint8,uint256,address[3],bool[4],uint256[5]):(address)",
-      [
-        ethereum.Value.fromString(_name),
-        ethereum.Value.fromString(_symbol),
-        ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(_decimal)),
-        ethereum.Value.fromUnsignedBigInt(_supply),
-        ethereum.Value.fromAddressArray(_address),
-        ethereum.Value.fromBooleanArray(_reflectionType),
-        ethereum.Value.fromUnsignedBigIntArray(_parameters)
-      ]
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
+  get _implementation(): Address {
+    return this._call.inputValues[1].value.toAddress();
+  }
+
+  get _isReflective(): boolean {
+    return this._call.inputValues[2].value.toBoolean();
+  }
+
+  get _features(): Array<boolean> {
+    return this._call.inputValues[3].value.toBooleanArray();
+  }
+}
+
+export class AddNewERC20ImplementationCall__Outputs {
+  _call: AddNewERC20ImplementationCall;
+
+  constructor(call: AddNewERC20ImplementationCall) {
+    this._call = call;
+  }
+}
+
+export class CreateReflectiveTokenCall extends ethereum.Call {
+  get inputs(): CreateReflectiveTokenCall__Inputs {
+    return new CreateReflectiveTokenCall__Inputs(this);
+  }
+
+  get outputs(): CreateReflectiveTokenCall__Outputs {
+    return new CreateReflectiveTokenCall__Outputs(this);
+  }
+}
+
+export class CreateReflectiveTokenCall__Inputs {
+  _call: CreateReflectiveTokenCall;
+
+  constructor(call: CreateReflectiveTokenCall) {
+    this._call = call;
+  }
+
+  get _name(): string {
+    return this._call.inputValues[0].value.toString();
+  }
+
+  get _symbol(): string {
+    return this._call.inputValues[1].value.toString();
+  }
+
+  get _decimal(): i32 {
+    return this._call.inputValues[2].value.toI32();
+  }
+
+  get _supply(): BigInt {
+    return this._call.inputValues[3].value.toBigInt();
+  }
+
+  get _address(): Array<Address> {
+    return this._call.inputValues[4].value.toAddressArray();
+  }
+
+  get _parameters(): Array<BigInt> {
+    return this._call.inputValues[5].value.toBigIntArray();
+  }
+
+  get _typeOfToken(): BigInt {
+    return this._call.inputValues[6].value.toBigInt();
+  }
+
+  get _documentHash(): string {
+    return this._call.inputValues[7].value.toString();
+  }
+}
+
+export class CreateReflectiveTokenCall__Outputs {
+  _call: CreateReflectiveTokenCall;
+
+  constructor(call: CreateReflectiveTokenCall) {
+    this._call = call;
+  }
+
+  get deployed(): Address {
+    return this._call.outputValues[0].value.toAddress();
+  }
+}
+
+export class CreateTokenCall extends ethereum.Call {
+  get inputs(): CreateTokenCall__Inputs {
+    return new CreateTokenCall__Inputs(this);
+  }
+
+  get outputs(): CreateTokenCall__Outputs {
+    return new CreateTokenCall__Outputs(this);
+  }
+}
+
+export class CreateTokenCall__Inputs {
+  _call: CreateTokenCall;
+
+  constructor(call: CreateTokenCall) {
+    this._call = call;
+  }
+
+  get _name(): string {
+    return this._call.inputValues[0].value.toString();
+  }
+
+  get _symbol(): string {
+    return this._call.inputValues[1].value.toString();
+  }
+
+  get _owner(): Address {
+    return this._call.inputValues[2].value.toAddress();
+  }
+
+  get _decimal(): i32 {
+    return this._call.inputValues[3].value.toI32();
+  }
+
+  get _initialSupply(): BigInt {
+    return this._call.inputValues[4].value.toBigInt();
+  }
+
+  get _totalSupply(): BigInt {
+    return this._call.inputValues[5].value.toBigInt();
+  }
+
+  get _typeOfToken(): BigInt {
+    return this._call.inputValues[6].value.toBigInt();
+  }
+
+  get _documentHash(): string {
+    return this._call.inputValues[7].value.toString();
+  }
+}
+
+export class CreateTokenCall__Outputs {
+  _call: CreateTokenCall;
+
+  constructor(call: CreateTokenCall) {
+    this._call = call;
+  }
+
+  get deployed(): Address {
+    return this._call.outputValues[0].value.toAddress();
+  }
+}
+
+export class InitializeCall extends ethereum.Call {
+  get inputs(): InitializeCall__Inputs {
+    return new InitializeCall__Inputs(this);
+  }
+
+  get outputs(): InitializeCall__Outputs {
+    return new InitializeCall__Outputs(this);
+  }
+}
+
+export class InitializeCall__Inputs {
+  _call: InitializeCall;
+
+  constructor(call: InitializeCall) {
+    this._call = call;
+  }
+
+  get _implementation(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get _autoLPRouter(): Address {
+    return this._call.inputValues[1].value.toAddress();
+  }
+}
+
+export class InitializeCall__Outputs {
+  _call: InitializeCall;
+
+  constructor(call: InitializeCall) {
+    this._call = call;
   }
 }
 
@@ -432,6 +663,36 @@ export class TransferOwnershipCall__Outputs {
   _call: TransferOwnershipCall;
 
   constructor(call: TransferOwnershipCall) {
+    this._call = call;
+  }
+}
+
+export class UpdateAutoLPRouterCall extends ethereum.Call {
+  get inputs(): UpdateAutoLPRouterCall__Inputs {
+    return new UpdateAutoLPRouterCall__Inputs(this);
+  }
+
+  get outputs(): UpdateAutoLPRouterCall__Outputs {
+    return new UpdateAutoLPRouterCall__Outputs(this);
+  }
+}
+
+export class UpdateAutoLPRouterCall__Inputs {
+  _call: UpdateAutoLPRouterCall;
+
+  constructor(call: UpdateAutoLPRouterCall) {
+    this._call = call;
+  }
+
+  get _autoLPRouter(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class UpdateAutoLPRouterCall__Outputs {
+  _call: UpdateAutoLPRouterCall;
+
+  constructor(call: UpdateAutoLPRouterCall) {
     this._call = call;
   }
 }
@@ -497,185 +758,5 @@ export class UpgradeToAndCallCall__Outputs {
 
   constructor(call: UpgradeToAndCallCall) {
     this._call = call;
-  }
-}
-
-export class InitializeCall extends ethereum.Call {
-  get inputs(): InitializeCall__Inputs {
-    return new InitializeCall__Inputs(this);
-  }
-
-  get outputs(): InitializeCall__Outputs {
-    return new InitializeCall__Outputs(this);
-  }
-}
-
-export class InitializeCall__Inputs {
-  _call: InitializeCall;
-
-  constructor(call: InitializeCall) {
-    this._call = call;
-  }
-
-  get _implementation(): Address {
-    return this._call.inputValues[0].value.toAddress();
-  }
-}
-
-export class InitializeCall__Outputs {
-  _call: InitializeCall;
-
-  constructor(call: InitializeCall) {
-    this._call = call;
-  }
-}
-
-export class AddNewERC20ImplementationCall extends ethereum.Call {
-  get inputs(): AddNewERC20ImplementationCall__Inputs {
-    return new AddNewERC20ImplementationCall__Inputs(this);
-  }
-
-  get outputs(): AddNewERC20ImplementationCall__Outputs {
-    return new AddNewERC20ImplementationCall__Outputs(this);
-  }
-}
-
-export class AddNewERC20ImplementationCall__Inputs {
-  _call: AddNewERC20ImplementationCall;
-
-  constructor(call: AddNewERC20ImplementationCall) {
-    this._call = call;
-  }
-
-  get typeOfToken(): string {
-    return this._call.inputValues[0].value.toString();
-  }
-
-  get _implementation(): Address {
-    return this._call.inputValues[1].value.toAddress();
-  }
-}
-
-export class AddNewERC20ImplementationCall__Outputs {
-  _call: AddNewERC20ImplementationCall;
-
-  constructor(call: AddNewERC20ImplementationCall) {
-    this._call = call;
-  }
-}
-
-export class CreateTokenCall extends ethereum.Call {
-  get inputs(): CreateTokenCall__Inputs {
-    return new CreateTokenCall__Inputs(this);
-  }
-
-  get outputs(): CreateTokenCall__Outputs {
-    return new CreateTokenCall__Outputs(this);
-  }
-}
-
-export class CreateTokenCall__Inputs {
-  _call: CreateTokenCall;
-
-  constructor(call: CreateTokenCall) {
-    this._call = call;
-  }
-
-  get _name(): string {
-    return this._call.inputValues[0].value.toString();
-  }
-
-  get _symbol(): string {
-    return this._call.inputValues[1].value.toString();
-  }
-
-  get _owner(): Address {
-    return this._call.inputValues[2].value.toAddress();
-  }
-
-  get _decimal(): i32 {
-    return this._call.inputValues[3].value.toI32();
-  }
-
-  get _initialSupply(): BigInt {
-    return this._call.inputValues[4].value.toBigInt();
-  }
-
-  get _totalSupply(): BigInt {
-    return this._call.inputValues[5].value.toBigInt();
-  }
-
-  get _features(): Array<boolean> {
-    return this._call.inputValues[6].value.toBooleanArray();
-  }
-}
-
-export class CreateTokenCall__Outputs {
-  _call: CreateTokenCall;
-
-  constructor(call: CreateTokenCall) {
-    this._call = call;
-  }
-
-  get deployed(): Address {
-    return this._call.outputValues[0].value.toAddress();
-  }
-}
-
-export class CreateReflectiveTokenCall extends ethereum.Call {
-  get inputs(): CreateReflectiveTokenCall__Inputs {
-    return new CreateReflectiveTokenCall__Inputs(this);
-  }
-
-  get outputs(): CreateReflectiveTokenCall__Outputs {
-    return new CreateReflectiveTokenCall__Outputs(this);
-  }
-}
-
-export class CreateReflectiveTokenCall__Inputs {
-  _call: CreateReflectiveTokenCall;
-
-  constructor(call: CreateReflectiveTokenCall) {
-    this._call = call;
-  }
-
-  get _name(): string {
-    return this._call.inputValues[0].value.toString();
-  }
-
-  get _symbol(): string {
-    return this._call.inputValues[1].value.toString();
-  }
-
-  get _decimal(): i32 {
-    return this._call.inputValues[2].value.toI32();
-  }
-
-  get _supply(): BigInt {
-    return this._call.inputValues[3].value.toBigInt();
-  }
-
-  get _address(): Array<Address> {
-    return this._call.inputValues[4].value.toAddressArray();
-  }
-
-  get _reflectionType(): Array<boolean> {
-    return this._call.inputValues[5].value.toBooleanArray();
-  }
-
-  get _parameters(): Array<BigInt> {
-    return this._call.inputValues[6].value.toBigIntArray();
-  }
-}
-
-export class CreateReflectiveTokenCall__Outputs {
-  _call: CreateReflectiveTokenCall;
-
-  constructor(call: CreateReflectiveTokenCall) {
-    this._call = call;
-  }
-
-  get deployed(): Address {
-    return this._call.outputValues[0].value.toAddress();
   }
 }

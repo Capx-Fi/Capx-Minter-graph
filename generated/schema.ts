@@ -177,6 +177,23 @@ export class TokenDeployed extends Entity {
       this.set("tokenCreatedAt", Value.fromBigInt(<BigInt>value));
     }
   }
+
+  get documentHash(): string | null {
+    let value = this.get("documentHash");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set documentHash(value: string | null) {
+    if (!value) {
+      this.unset("documentHash");
+    } else {
+      this.set("documentHash", Value.fromString(<string>value));
+    }
+  }
 }
 
 export class ERC20Implementation extends Entity {
@@ -212,8 +229,8 @@ export class ERC20Implementation extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get tokenAddress(): string | null {
-    let value = this.get("tokenAddress");
+  get address(): string | null {
+    let value = this.get("address");
     if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
@@ -221,16 +238,16 @@ export class ERC20Implementation extends Entity {
     }
   }
 
-  set tokenAddress(value: string | null) {
+  set address(value: string | null) {
     if (!value) {
-      this.unset("tokenAddress");
+      this.unset("address");
     } else {
-      this.set("tokenAddress", Value.fromString(<string>value));
+      this.set("address", Value.fromString(<string>value));
     }
   }
 
-  get tokenTypeString(): string | null {
-    let value = this.get("tokenTypeString");
+  get name(): string | null {
+    let value = this.get("name");
     if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
@@ -238,11 +255,127 @@ export class ERC20Implementation extends Entity {
     }
   }
 
-  set tokenTypeString(value: string | null) {
+  set name(value: string | null) {
     if (!value) {
-      this.unset("tokenTypeString");
+      this.unset("name");
     } else {
-      this.set("tokenTypeString", Value.fromString(<string>value));
+      this.set("name", Value.fromString(<string>value));
+    }
+  }
+
+  get ERC_20_Compliant(): boolean {
+    let value = this.get("ERC_20_Compliant");
+    return value!.toBoolean();
+  }
+
+  set ERC_20_Compliant(value: boolean) {
+    this.set("ERC_20_Compliant", Value.fromBoolean(value));
+  }
+
+  get Mintable(): boolean {
+    let value = this.get("Mintable");
+    return value!.toBoolean();
+  }
+
+  set Mintable(value: boolean) {
+    this.set("Mintable", Value.fromBoolean(value));
+  }
+
+  get Burnable(): boolean {
+    let value = this.get("Burnable");
+    return value!.toBoolean();
+  }
+
+  set Burnable(value: boolean) {
+    this.set("Burnable", Value.fromBoolean(value));
+  }
+
+  get Ownable(): boolean {
+    let value = this.get("Ownable");
+    return value!.toBoolean();
+  }
+
+  set Ownable(value: boolean) {
+    this.set("Ownable", Value.fromBoolean(value));
+  }
+
+  get Pauseable(): boolean {
+    let value = this.get("Pauseable");
+    return value!.toBoolean();
+  }
+
+  set Pauseable(value: boolean) {
+    this.set("Pauseable", Value.fromBoolean(value));
+  }
+
+  get Capped(): boolean {
+    let value = this.get("Capped");
+    return value!.toBoolean();
+  }
+
+  set Capped(value: boolean) {
+    this.set("Capped", Value.fromBoolean(value));
+  }
+
+  get Liquidity_Generator(): boolean {
+    let value = this.get("Liquidity_Generator");
+    return value!.toBoolean();
+  }
+
+  set Liquidity_Generator(value: boolean) {
+    this.set("Liquidity_Generator", Value.fromBoolean(value));
+  }
+
+  get Donation_Charity(): boolean {
+    let value = this.get("Donation_Charity");
+    return value!.toBoolean();
+  }
+
+  set Donation_Charity(value: boolean) {
+    this.set("Donation_Charity", Value.fromBoolean(value));
+  }
+
+  get Yield_Generator(): boolean {
+    let value = this.get("Yield_Generator");
+    return value!.toBoolean();
+  }
+
+  set Yield_Generator(value: boolean) {
+    this.set("Yield_Generator", Value.fromBoolean(value));
+  }
+
+  get Taxable(): boolean {
+    let value = this.get("Taxable");
+    return value!.toBoolean();
+  }
+
+  set Taxable(value: boolean) {
+    this.set("Taxable", Value.fromBoolean(value));
+  }
+
+  get Verified(): boolean {
+    let value = this.get("Verified");
+    return value!.toBoolean();
+  }
+
+  set Verified(value: boolean) {
+    this.set("Verified", Value.fromBoolean(value));
+  }
+
+  get advancedFeatures(): string | null {
+    let value = this.get("advancedFeatures");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set advancedFeatures(value: string | null) {
+    if (!value) {
+      this.unset("advancedFeatures");
+    } else {
+      this.set("advancedFeatures", Value.fromString(<string>value));
     }
   }
 }
