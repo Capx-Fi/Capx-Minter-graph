@@ -1,0 +1,16 @@
+{
+  "name": "mint-fuji",
+  "license": "UNLICENSED",
+  "scripts": {
+    "codegen": "graph codegen",
+    "build": "graph build",
+    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ varun-capx/mint-fuji",
+    "create-local": "graph create --node http://localhost:8020/ varun-capx/mint-fuji",
+    "remove-local": "graph remove --node http://localhost:8020/ varun-capx/mint-fuji",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 varun-capx/mint-fuji"
+  },
+  "dependencies": {
+    "@graphprotocol/graph-cli": "0.30.4",
+    "@graphprotocol/graph-ts": "0.27.0"
+  }
+}

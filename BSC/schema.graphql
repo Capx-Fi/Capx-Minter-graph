@@ -1,0 +1,45 @@
+type TokenDeployed @entity {
+  id: ID!
+  typeOfToken: BigInt
+  tokenName: String
+  tokenSymbol: String
+  tokenDecimals: BigInt
+  tokenTotalSupply: BigInt
+  tokenOwner: String
+  tokenDeployer: String
+  tokenCreatedAt: BigInt
+  documentHash: String
+}
+
+type ERC20Implementation @entity {
+  id: ID!
+  address: String
+  name: String
+  ERC_20_Compliant: Boolean
+  Mintable: Boolean
+  Burnable: Boolean
+  Ownable: Boolean
+  Pauseable: Boolean
+  Capped: Boolean
+  Liquidity_Generator: Boolean
+  Donation_Charity: Boolean
+  Yield_Generator: Boolean
+  Taxable: Boolean
+  Verified: Boolean
+  advancedFeatures: String
+}
+
+
+# Parameters for DeployedToken
+# TypeOfToken
+# TokenName
+# TokenAddress (Deployed Address)
+# TokenSymbol
+# TokenDecimal
+# TokenOwner
+# TokenDeployer
+# TokenMintedAt / TokenCreatedAt
+# parameters for ERC20Type
+# TokenTypeID
+# TokenAddress (Implementation Address)
+# TokenTypeString (CapxStandardToken/......)
